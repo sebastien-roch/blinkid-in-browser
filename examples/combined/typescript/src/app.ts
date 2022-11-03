@@ -79,6 +79,18 @@ async function startScan(sdk: BlinkIDSDK.WasmSDK) {
     // GenericCombine ID Recognizer - scan ID documents on both sides
     const combinedGenericIDRecognizer = await BlinkIDSDK.createBlinkIdCombinedRecognizer(sdk);
 
+    // UPDATE SETTINGS
+    const settings = await combinedGenericIDRecognizer.currentSettings();
+    const recognitionModeFilter = new BlinkIDSDK.RecognitionModeFilter();
+    recognitionModeFilter.enableMrzId = false;
+    recognitionModeFilter.enableMrzPassport = false;
+    recognitionModeFilter.enableMrzVisa = false;
+    recognitionModeFilter.enablePhotoId = false;
+    recognitionModeFilter.enableBarcodeId = false;
+    recognitionModeFilter.enableFullDocumentRecognition = true;
+    settings.recognitionModeFilter = recognitionModeFilter;
+    await combinedGenericIDRecognizer.updateSettings(settings);
+
     // Create a callbacks object that will receive recognition events, such as detected object location etc.
     const callbacks = {
         onQuadDetection: (quad: BlinkIDSDK.DisplayableQuad) => drawQuad(quad),
